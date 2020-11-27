@@ -124,58 +124,75 @@ calcula_distancia <- function(x1,y1,x2,y2,string_nombres){
 ##2 y 3 con su cluster original y busca la distancia minima a otros clusters
 ##para definir que otro dia debe de ser visitado el punto
 
+calcula_dias_aux <- function(df_dias_filt, cluster_dias){
+  frec <- df_dias_filt$Frecuencia - 1
+  for (j in 1:frec){
+    #print(cluster_dias)
+    dias <- calcula_distancia(df_dias_filt$lat[1],
+                              df_dias_filt$lon[1],
+                              cluster_dias$lat,
+                              cluster_dias$lon,
+                              cluster_dias$cluster)
+    dias <- dias[3]
+    dias <- as.integer(dias)
+    
+    if(!exists("dias_final")){
+      dias_final <- dias
+      cluster_dias <- cluster_dias[!cluster_dias$cluster == dias_final,]
+      df_dias_filt$cluster_predicted <- df_dias_filt$cluster#"Original"
+      df_dias_filt <- rbind(df_dias_filt, df_dias_filt)
+      df_dias_filt$cluster_predicted[j+1] <- dias_final
+      
+    } else {
+      dias_final <- dias
+      cluster_dias <- cluster_dias[!cluster_dias$cluster == dias_final,]
+      df_dias_filt <- rbind(df_dias_filt, df_dias_filt[1,])
+      df_dias_filt$cluster_predicted[j+1] <- dias_final
+      
+    }
+    
+  }
+  
+  rm(dias_final)
+  
+  return(df_dias_filt)
+  
+}
+
 df_frecuencia <- df_2_y_3
 df_cluster_original <- k2_centers
 i <- 1
 
 df_cluster_original$cluster <- rownames(df_cluster_original)
 calcula_dias <- function(df_frecuencia, df_cluster_original){
-  for(i in nrow(df_frecuencia)){
+  
+  
+  for(i in 1:nrow(df_frecuencia)){
+    print(i)
+    
     df_dias_filt <- df_frecuencia[i,]
     ###Remover el cluster original antes de llamar a calcula dias
     cluster_dias <- df_cluster_original[!df_cluster_original$cluster == df_dias_filt$cluster,]
     ###Llamar a cluster dias las veces necesarias y en cada iteracion
     ## remover el cluster que ya salio
-    
     frec <- df_dias_filt$Frecuencia - 1
-    for (j in 1:frec){
-      print(cluster_dias)
-      dias <- calcula_distancia(df_dias_filt$lat[1],
-                                df_dias_filt$lon[1],
-                                cluster_dias$lat,
-                                cluster_dias$lon,
-                                cluster_dias$cluster)
-      dias <- dias[3]
-      dias <- as.integer(dias)
-      
-      if(!exists("dias_final")){
-        dias_final <- dias
-        cluster_dias <- cluster_dias[!cluster_dias$cluster == dias_final,]
-        df_dias_filt$cluster_predicted <- "Original"
-        df_dias_filt <- rbind(df_dias_filt, df_dias_filt)
-        df_dias_filt$cluster_predicted[j+1] <- dias_final
-      } else {
-        dias_final <- dias
-        cluster_dias <- cluster_dias[!cluster_dias$cluster == dias_final,]
-        df_dias_filt <- rbind(df_dias_filt, df_dias_filt[1,])
-        df_dias_filt$cluster_predicted[j+1] <- dias_final
-        
-      }
-      rm(dias_final)
-    }
+    calcula_dias_temp <- calcula_dias_aux(df_dias_filt, cluster_dias)
     
     if(!exists("calcula_dias_final")){
-      calcula_dias_final <- df_dias_filt 
+      calcula_dias_final <- calcula_dias_temp
     } else {
-      calcula_dias_final <- rbind(calcula_dias_final, df_dias_filt)
+      calcula_dias_final <- rbind(calcula_dias_final, 
+                                  calcula_dias_temp)
     }
-    
+
     
   }
   
   return(calcula_dias_final)
   
 }
+
+
 a <- calcula_dias(df_frecuencia, df_cluster_original)
 
 
