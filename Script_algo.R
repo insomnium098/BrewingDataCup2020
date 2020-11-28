@@ -3,6 +3,8 @@ library(cluster)
 library(factoextra)
 library(MASS)
 
+source("AUX.R")
+
 datos <- read.csv("ubicaciones.csv",
                   header = TRUE)
 
@@ -16,7 +18,7 @@ plot(datos$lat, datos$lon)
 
 
 ####Clustering
-
+set.seed(95)
 ####CLUSTER POR DISTANCIA
 df_long <- datos[,5:6]
 ###Normalizar las coordenadas
@@ -230,8 +232,15 @@ filt6 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 6)
 zona6 <- rbind(zona6_final, filt6[,1:9])
 
 
+#####Actualizar volumen total
+zona1 <- actualiza_volumen(zona1)
+zona2 <- actualiza_volumen(zona2)
+zona2 <- actualiza_volumen(zona3)
+zona3 <- actualiza_volumen(zona4)
+zona4 <- actualiza_volumen(zona5)
+zona5 <- actualiza_volumen(zona6)
 
-
-
+#####
+#zona_final <- rbind(zona1,zona2,zona3,zona4,zona5,zona6)
 
 
