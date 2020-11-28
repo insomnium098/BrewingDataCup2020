@@ -1,6 +1,6 @@
 library(dplyr)
 library(cluster)
-library(factoextra)
+#library(factoextra)
 library(MASS)
 
 source("AUX.R")
@@ -141,7 +141,7 @@ calcula_dias_aux <- function(df_dias_filt, cluster_dias){
     if(!exists("dias_final")){
       dias_final <- dias
       cluster_dias <- cluster_dias[!cluster_dias$cluster == dias_final,]
-      df_dias_filt$cluster_predicted <- "Original"#df_dias_filt$cluster#"Original"
+      df_dias_filt$cluster_predicted <- df_dias_filt$cluster#"Original"
       df_dias_filt <- rbind(df_dias_filt, df_dias_filt)
       df_dias_filt$cluster_predicted[j+1] <- dias_final
       
@@ -214,21 +214,34 @@ zona6_final <-  filter(datos_clust, cluster == 6)
 
 ####Pegarles los 2 y 3
 filt1 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 1)
+filt1$cluster <- filt1$cluster_predicted
+
 zona1 <- rbind(zona1_final, filt1[,1:9])
 
 filt2 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 2)
+filt2$cluster <- filt2$cluster_predicted
+
 zona2 <- rbind(zona2_final, filt2[,1:9])
 
 filt3 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 3)
+filt3$cluster <- filt3$cluster_predicted
+
 zona3 <- rbind(zona3_final, filt3[,1:9])
 
+
 filt4 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 4)
+filt4$cluster <- filt4$cluster_predicted
+
 zona4 <- rbind(zona4_final, filt4[,1:9])
 
 filt5 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 5)
+filt5$cluster <- filt5$cluster_predicted
+
 zona5 <- rbind(zona5_final, filt5[,1:9])
 
 filt6 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 6)
+filt6$cluster <- filt6$cluster_predicted
+
 zona6 <- rbind(zona6_final, filt6[,1:9])
 
 
