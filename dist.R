@@ -6,7 +6,7 @@ distancia <- function(x, y) {
 }
 distancia1 <- function(x, y, l) {
         
-        return( ((x[1,4] - y[l,1])**2 + (x[1,5] - y[l,2])**2)**(1/2) )
+        return( ((x[1,5] - y[l,1])**2 + (x[1,6] - y[l,2])**2)**(1/2) )
 }
 n = nrow(zona5)
 matriz_adyacencia <- matrix(NA, n, n)
@@ -21,9 +21,14 @@ d <- c()
 for (i in 1:n) {
         d <- c((sum(matriz_adyacencia[i,])/n), d)
 }
+###
+for (i in 1:n) {
+        d <- c(distancia1(zona5[i,],df_cluster_original, 5), d)
+}
+##3
 #d <- as.data.frame(d)
 
-a <- which( d >= 60)
+a <- which( d >= 1.3)
 #zona5[a,]
 
 plot(d, zona5$Vol_Entrega)

@@ -9,7 +9,7 @@ for( i in 1:6){
                " Promedio= ", promedio)
   
   message(ms)
-  print(quantile(df_filt$Vol_Total))
+  print(quantile(df_filt$Vol_Entrega))
 }
 
 
