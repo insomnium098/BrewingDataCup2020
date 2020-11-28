@@ -119,7 +119,10 @@ calcula_distancia <- function(x1,y1,x2,y2,string_nombres){
   
 }
 
-#calcula_distancia(0.8308095811, 1.113070869, k2_centers$lat, k2_centers$lon)
+a <- calcula_distancia(0.8308095811, 1.113070869,
+                       df_cluster_original$lat, 
+                       df_cluster_original$lon,
+                       df_cluster_original$cluster)
 
 ####FUNCION CALCULA_DIAS
 ##Esta funcion recibe un df con los puntos que tienen una frecuencia de

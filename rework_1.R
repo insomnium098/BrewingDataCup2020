@@ -1,0 +1,268 @@
+
+##df_cluster_original
+
+funcion_revisa_zona <- function(id,zona){
+  
+  if(id %in% zona$Id_Cliente){
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
+  
+  
+}
+
+
+
+######
+calcula_distancia_centro <- function(x1,y1,x2,y2){
+  #c2 y y2 son los centros
+    distancia <- sqrt(((x2 - x1)^2) + ((y2 - y1)^2))
+    return(distancia)
+}
+
+
+######
+
+
+m = 100
+datos_prueba <- datos_clust
+rm(zona1_prueba)
+rm(zona2_prueba)
+rm(zona3_prueba)
+rm(zona4_prueba)
+rm(zona5_prueba)
+rm(zona6_prueba)
+
+
+######
+
+#####Para zona 1 calculamos todas las distancias de los puntos a la zona 1
+#####Para encontrar el punto mas cercano a zona 1, este punto no debera estar ya en
+##zona1 #, este se le pegara a zona1.
+
+a <- funcion_busca_y_pega (datos_prueba, zona1)
+centros_cluster <- df_cluster_original
+zona_a_buscar <- 1
+zona_todos <- datos_clust
+
+
+funcion_busca_y_pega <- function(zona_todos,zona_a_buscar,centros_cluster){
+  ####Calcular las distancias de zona todos a la zona a buscar
+  filt_zona <- centros_cluster[centros_cluster[,3] == zona_a_buscar,]
+  x_zona_buscar <- filt_zona[1,1]
+  y_zona_buscar <- filt_zona[1,2]
+  ####Comparar todos los puntos de zona_todos contra
+  ###x_zona_buscar y y_zona_buscar
+  
+  for (i in 1:nrow(zona_todos)){
+    x_cliente <- zona_todos[i,5]
+    y_cliente <- zona_todos[i,6]
+    
+    dist_cliente <- calcula_distancia_centro(x_zona_buscar, y_zona_buscar,
+                                             x_cliente, y_cliente)
+    if(!exists("dist_cliente_final")){
+      dist_cliente_final <- dist_cliente
+    } else {
+      dist_cliente_final <- c(dist_cliente_final, dist_cliente)
+    }
+  }
+  
+  ###Añadimos la columna
+  zona_final <- zona_todos
+  zona_final$distancia_a_cluster <- dist_cliente_final
+  rm(dist_cliente_final)
+
+  return(zona_final)
+  
+}
+
+##########
+datos_test_compara_cluster_1 <- funcion_busca_y_pega(zona_todos, 1, centros_cluster)
+###los ordenamos
+datos_test_compara_cluster_1 <- datos_test_compara_cluster_1[order(datos_test_compara_cluster_1$distancia_a_cluster),]
+
+###El elemento de hasta arriba(el mas cercano) se le pega a la zona correspondiente
+##en este caso zona 1 y se le reduce la frecuencia
+
+
+
+zona_final <- zona_todos
+
+funcion_elige_minimo_todos <- function(zona_final, zona_cluster, contador){
+  contador = contador + 1
+  zona_final <- zona_final[order(zona_final$distancia_a_cluster),]
+  #zona_elige <- zona_final[1,]
+  zona_elige <- zona_final[contador,]
+  
+  if(funcion_revisa_zona(zona_elige[1,1], zona_cluster)) {
+    zona_elige <- funcion_elige_minimo(zona_final,
+                                       num_cluster, zona_cluster, contador)
+  }
+  ###Si el elemento ya esta en el cluster no se hace nada
+  #id <- zona_elige[1,1]
+  
+  
+  ##Actualizar frecuencia
+  #Si es 0 se elimina
+  else {
+  zona_final[contador,3] <- zona_final[contador,3] - 1
+  if(zona_final[contador,3] == 0){
+    zona_final <- zona_final[-c(contador),]
+  }
+  }
+  
+  return(zona_elige)
+}
+
+funcion_elige_minimo_primer_caso <- function(zona_final){
+  zona_final <- zona_final[order(zona_final$distancia_a_cluster),]
+  zona_elige <- zona_final[1,]
+
+
+  ###Si el elemento ya esta en el cluster no se hace nada
+  #id <- zona_elige[1,1]
+  
+  
+  ##Actualizar frecuencia
+  #Si es 0 se elimina
+  
+    zona_final[1,3] <- zona_final[contador,3] - 1
+    if(zona_final[1,3] == 0){
+      zona_final <- zona_final[2:nrow(zona_final),]
+    
+  }
+  
+  return(zona_elige)
+}
+
+###Esta funcion recibe un df y actualiza la frecuencia de su
+##primer elemento, lo elimina si es 0
+##Debe ser llamada inmediatamente despues de
+###funcion_elige_minimo
+funcion_actualiza <- function(zona_final){
+  
+  zona_final[1,3] <- zona_final[1,3] - 1
+  if(zona_final[1,3] == 0){
+    zona_final <- zona_final[2:nrow(zona_final),]
+  }
+  
+  return(zona_final)
+}
+
+
+
+######TESTING FUNCIONES
+zona_final <- datos_test_compara_cluster_1
+###Despues de llamar la funcion se debe de actualizar manualmente la zona
+test <- funcion_elige_minimo_y_actualiza(zona_final)
+####Actualizar
+zona_final <- funcion_actualiza(zona_final)
+
+####Debemos de crear un dataframe para cada cluster
+
+if(!exists(zona1_test)){
+  zona1_test <- test
+} else{
+  zona1_test <- rbind(zona1_test, test)
+}
+
+####Automatizar
+zona_todos <- datos_clust
+centros_cluster$cluster <- as.integer(centros_cluster$cluster)
+total <- as.integer(sum((datos_prueba$Frecuencia))) # length(centros_cluster$cluster))
+
+##HCER RM
+rm(zona1_test,zona2_test,zona3_test,
+   zona4_test,zona5_test,zona6_test)
+
+###
+
+
+clientes <- datos[,1]
+
+visitas <- as.data.frame(clientes)
+#visitas$Id_Cliente <- clientes
+visitas$D1 <- 0
+visitas$D2 <- 0
+visitas$D3 <- 0
+visitas$D4 <- 0
+visitas$D5 <- 0
+visitas$D6 <- 0
+
+cont <- 1
+repeticiones <- rep(1:6, total)
+for (i in 1:total){
+  
+  #####Validar que el elemento no este en el cluster
+  elemento <- zona
+  
+  
+  #####
+  if(cont%%150==0) {print(cont)}
+  cont = cont + 1
+  zona_todos <- funcion_busca_y_pega(zona_todos, repeticiones[i], centros_cluster)
+  zona_todos <- zona_todos[order(zona_todos$distancia_a_cluster),]
+  ###Verificar que el primero
+  
+  zona_temp <- funcion_elige_minimo(zona_todos, )
+  zona_todos <- funcion_actualiza(zona_todos)
+  ####Debemos de crear un dataframe para cada cluster
+  
+  if(repeticiones[i] == 1){
+    if(!exists("zona1_test")){
+      zona1_test <- zona_temp
+    } else{
+      zona1_test <- rbind(zona1_test, zona_temp)
+    }
+  } else if (repeticiones[i] == 2){
+    if(!exists("zona2_test")){
+      zona2_test <- zona_temp
+    } else{
+      zona2_test <- rbind(zona2_test, zona_temp)
+    }
+  } else if (repeticiones[i] == 3){
+    if(!exists("zona3_test")){
+      zona3_test <- zona_temp
+    } else{
+      zona3_test <- rbind(zona3_test, zona_temp)
+    }
+  } else if (repeticiones[i] == 4){
+    if(!exists("zona4_test")){
+      zona4_test <- zona_temp
+    } else{
+      zona4_test <- rbind(zona4_test, zona_temp)
+    }
+  } else if (repeticiones[i] == 5){
+    if(!exists("zona5_test")){
+      zona5_test <- zona_temp
+    } else{
+      zona5_test <- rbind(zona5_test, zona_temp)
+    }
+  } else if (repeticiones[i] == 6){
+    if(!exists("zona6_test")){
+      zona6_test <- zona_temp
+    } else{
+      zona6_test <- rbind(zona6_test, zona_temp)
+    }
+  } else {
+    message("ALGO SALIO MAL")
+  }
+  
+
+  
+  
+  
+}
+zona_test_final <- rbind(zona1_test,zona2_test,zona3_test,
+                           zona4_test,zona5_test,zona6_test)
+
+print("VALORES FINALES")
+test <- calcula_vol_total(zona_test_final, TRUE)
+
+
+
+
+
+
+
