@@ -244,16 +244,7 @@ filt6$cluster <- filt6$cluster_predicted
 
 zona6 <- rbind(zona6_final, filt6[,1:9])
 
-
-#####Actualizar volumen total
-zona1 <- actualiza_volumen(zona1)
-zona2 <- actualiza_volumen(zona2)
-zona2 <- actualiza_volumen(zona3)
-zona3 <- actualiza_volumen(zona4)
-zona4 <- actualiza_volumen(zona5)
-zona5 <- actualiza_volumen(zona6)
-
 #####
-#zona_final <- rbind(zona1,zona2,zona3,zona4,zona5,zona6)
+zona_final <- rbind(zona1,zona2,zona3,zona4,zona5,zona6)
 
 
