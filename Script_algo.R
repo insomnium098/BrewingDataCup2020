@@ -141,7 +141,7 @@ calcula_dias_aux <- function(df_dias_filt, cluster_dias){
     if(!exists("dias_final")){
       dias_final <- dias
       cluster_dias <- cluster_dias[!cluster_dias$cluster == dias_final,]
-      df_dias_filt$cluster_predicted <- df_dias_filt$cluster#"Original"
+      df_dias_filt$cluster_predicted <- "Original"#df_dias_filt$cluster#"Original"
       df_dias_filt <- rbind(df_dias_filt, df_dias_filt)
       df_dias_filt$cluster_predicted[j+1] <- dias_final
       
