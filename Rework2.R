@@ -17,8 +17,8 @@ funcion_revisa_zona <- function(id,zona){
 ######
 calcula_distancia_centro <- function(x1,y1,x2,y2){
   #c2 y y2 son los centros
-    distancia <- sqrt(((x2 - x1)^2) + ((y2 - y1)^2))
-    return(distancia)
+  distancia <- sqrt(((x2 - x1)^2) + ((y2 - y1)^2))
+  return(distancia)
 }
 
 
@@ -72,7 +72,7 @@ funcion_busca_y_pega <- function(zona_todos,zona_a_buscar,centros_cluster){
   zona_final <- zona_todos
   zona_final$distancia_a_cluster <- dist_cliente_final
   rm(dist_cliente_final)
-
+  
   return(zona_final)
   
 }
@@ -110,7 +110,7 @@ funcion_elige_minimo_todos <- function(zona_final, zona_cluster, contador){
   else {
     zona_final[contador,3] <- zona_final[contador,3] - 1
     if(zona_final[contador,3] == 0){
-     zona_final <- zona_final[-c(contador),]
+      zona_final <- zona_final[-c(contador),]
     }
   }
   
@@ -120,8 +120,8 @@ funcion_elige_minimo_todos <- function(zona_final, zona_cluster, contador){
 funcion_elige_minimo_primer_caso <- function(zona_final){
   zona_final <- zona_final[order(zona_final$distancia_a_cluster),]
   zona_elige <- zona_final[1,]
-
-
+  
+  
   ###Si el elemento ya esta en el cluster no se hace nada
   #id <- zona_elige[1,1]
   
@@ -129,9 +129,9 @@ funcion_elige_minimo_primer_caso <- function(zona_final){
   ##Actualizar frecuencia
   #Si es 0 se elimina
   
-    zona_final[1,3] <- zona_final[1,3] - 1
-    if(zona_final[1,3] == 0){
-      zona_final <- zona_final[2:nrow(zona_final),]
+  zona_final[1,3] <- zona_final[1,3] - 1
+  if(zona_final[1,3] == 0){
+    zona_final <- zona_final[2:nrow(zona_final),]
     
   }
   
@@ -159,7 +159,7 @@ funcion_actualiza_todos <- function(zona_final, numero){
     zona_final <- zona_final[-c(numero),]
   }
   return(zona_final)
-  }
+}
 
 
 
@@ -278,7 +278,7 @@ for (i in 1:total){
   
 }
 zona_test_final <- rbind(zona1_test,zona2_test,zona3_test,
-                           zona4_test,zona5_test,zona6_test)
+                         zona4_test,zona5_test,zona6_test)
 
 print("VALORES FINALES")
 test <- calcula_vol_total(zona_test_final, TRUE)
