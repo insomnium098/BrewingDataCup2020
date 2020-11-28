@@ -4,7 +4,7 @@ library(factoextra)
 library(MASS)
 
 datos <- read.csv("ubicaciones.csv",
-                  header = TRUE, row.names = 1)
+                  header = TRUE)
 
 ##TO-DO: REMOVER LUGARES CON VOLUMEN DE ENTREGA 0
 
@@ -18,11 +18,11 @@ plot(datos$lat, datos$lon)
 ####Clustering
 
 ####CLUSTER POR DISTANCIA
-df_long <- datos[,4:5]
+df_long <- datos[,5:6]
 ###Normalizar las coordenadas
 df_long_normalized <-  scale(df_long ,center = TRUE, scale = TRUE)
 
-distance <- get_dist(df_long_normalized)
+#distance <- get_dist(df_long_normalized)
 
 k2 <- kmeans(df_long_normalized, centers = 6, nstart = 25) #Agrupamos k-medias con 25 configuraciones
 str(k2)
@@ -34,7 +34,7 @@ fviz_cluster(k2, data = df_long_normalized) #Visualizamos con 2 clusters
 ####asignar clusters a datos
 
 datos_clust <- datos
-datos_clust[,4:5] <- df_long_normalized
+datos_clust[,5:6] <- df_long_normalized
 datos_clust$Vol_Total <- datos_clust$Frecuencia * datos_clust$Vol_Entrega
 datos_clust$cluster <- k2$cluster
 
@@ -65,7 +65,7 @@ vol_clust2 <- sum(clust2$Vol_Entrega)
 df_vol <- datos_clust$Vol_Total
 df_vol <-  scale(df_vol ,center = TRUE, scale = TRUE)
 
-k2_dist <- kmeans(df_vol, centers = 2, nstart = 25) #Agrupamos k-medias con 25 configuraciones
+k2_dist <- kmeans(df_vol, centers = 6, nstart = 25) #Agrupamos k-medias con 25 configuraciones
 str(k2_dist)
 
 datos_clust$cluster_vol_total <- k2_dist$cluster
@@ -139,7 +139,7 @@ calcula_dias_aux <- function(df_dias_filt, cluster_dias){
     if(!exists("dias_final")){
       dias_final <- dias
       cluster_dias <- cluster_dias[!cluster_dias$cluster == dias_final,]
-      df_dias_filt$cluster_predicted <- df_dias_filt$cluster#"Original"
+      df_dias_filt$cluster_predicted <- "Original"#df_dias_filt$cluster#"Original"
       df_dias_filt <- rbind(df_dias_filt, df_dias_filt)
       df_dias_filt$cluster_predicted[j+1] <- dias_final
       
@@ -161,7 +161,7 @@ calcula_dias_aux <- function(df_dias_filt, cluster_dias){
 
 df_frecuencia <- df_2_y_3
 df_cluster_original <- k2_centers
-i <- 1
+#i <- 1
 
 df_cluster_original$cluster <- rownames(df_cluster_original)
 calcula_dias <- function(df_frecuencia, df_cluster_original){
@@ -192,8 +192,44 @@ calcula_dias <- function(df_frecuencia, df_cluster_original){
   
 }
 
+####Aqui calculamos los clusters mas cercanos a aquellos
+#### puntos que tienen >1 frecuencia
+clientes_2_y_3_frecuencia <- calcula_dias(df_frecuencia, df_cluster_original)
 
-a <- calcula_dias(df_frecuencia, df_cluster_original)
+
+
+
+
+
+##########JUNTAMOS LAS ZONAS PREDICHAS CON LAS FIJAS
+zona1_final <-  filter(datos_clust, cluster == 1)
+zona2_final <-  filter(datos_clust, cluster == 2)
+zona3_final <-  filter(datos_clust, cluster == 3)
+zona4_final <-  filter(datos_clust, cluster == 4)
+zona5_final <-  filter(datos_clust, cluster == 5)
+zona6_final <-  filter(datos_clust, cluster == 6)
+
+
+####Pegarles los 2 y 3
+filt1 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 1)
+zona1 <- rbind(zona1_final, filt1[,1:9])
+
+filt2 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 2)
+zona2 <- rbind(zona2_final, filt2[,1:9])
+
+filt3 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 3)
+zona3 <- rbind(zona3_final, filt3[,1:9])
+
+filt4 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 4)
+zona4 <- rbind(zona4_final, filt4[,1:9])
+
+filt5 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 5)
+zona5 <- rbind(zona5_final, filt5[,1:9])
+
+filt6 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 6)
+zona6 <- rbind(zona6_final, filt6[,1:9])
+
+
 
 
 
