@@ -247,4 +247,7 @@ zona6 <- rbind(zona6_final, filt6[,1:9])
 #####
 zona_final <- rbind(zona1,zona2,zona3,zona4,zona5,zona6)
 
+##Remover vol_total
+zona_final <- zona_final[,!names(zona_final) %in% ("Vol_Total")]
+
 
