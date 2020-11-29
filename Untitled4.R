@@ -18,3 +18,4 @@ ggplot(zona2_prueba, aes(x=lat, y=lon)) +
 
 ggplot(prueba_zona, aes(x=lat, y=lon, color=cluster)) + 
   geom_point()
+

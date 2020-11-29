@@ -1,3 +1,22 @@
+calcula_vol_total <- function(zona_prueba_final){
+  for( i in 1:6){
+    df_filt <- filter(zona_prueba_final, cluster == i)
+    vol_total <- sum(df_filt$Vol_Entrega)
+    n_elementos <- nrow(df_filt)
+    promedio <- mean(df_filt$Vol_Entrega)
+    
+    ms <- paste0("Vol_total= ", vol_total,
+                 " n_elementos= ", n_elementos,
+                 " Promedio= ", promedio)
+    
+
+      #print(quantile(df_filt$Vol_Entrega))
+    message(ms)
+
+  
+  }
+}
+
 
 ##df_cluster_original
 
@@ -11,16 +30,20 @@ funcion_output <- function(tabla_salida){
   clientes <- datos[,1]
   
   for (i in clientes) {
+    
+    ###Cluster1
+    
+    filt <- tabla_salida[tabla_salida$Id_Cliente %in% i,]
     output[i,1] <- i
-    output[i,2] <- sum(tabla_salida[,8] == i)
-    output[i,3] <- sum(tabla_salida[,8] == i)
-    output[i,4] <- sum(tabla_salida[,8] == i)
-    output[i,5] <- sum(tabla_salida[,8] == i)
-    output[i,6] <- sum(tabla_salida[,8] == i)
-    output[i,7] <- sum(tabla_salida[,8] == i)
+    output[i,2] <- sum(tabla_salida[i,8] == 1)
+    output[i,3] <- sum(tabla_salida[i,8] == 2)
+    output[i,4] <- sum(tabla_salida[i,8] == 3)
+    output[i,5] <- sum(tabla_salida[i,8] == 4)
+    output[i,6] <- sum(tabla_salida[i,8] == 5)
+    output[i,7] <- sum(tabla_salida[i,8] == 6)
   }
   
-  which(output[,2] >= 2)
+  which(output[,2] == 0)
   which(output[,3] >= 2)
   which(output[,4] >= 2)
   which(output[,5] >= 2)
@@ -251,31 +274,32 @@ tabla_salida$Id_8 <- 0
 tabla_salida$Id_9 <- 0
 colnames(tabla_salida) <- colnames(zona_todos)
 
-total <- as.integer(sum((datos_prueba$Frecuencia))) + 1
+total <- as.integer(sum((datos_prueba$Frecuencia))) + 4
 repeticiones <- rep(1:6, as.integer(total/6))
 zona_todos <- datos_clust
 
 ##
 for (i in 1:total){
-#for (i in 1:10){
+#for (i in 1:100){
+  print(i)
   
   
   
   #####Validar que el elemento no este en el cluster
   
   #####
-  print(i)
+  #print(paste0("El i es = ", repeticiones[i]))
   zona_todos <- funcion_busca_y_pega(zona_todos, repeticiones[i], centros_cluster)
   zona_todos <- zona_todos[order(zona_todos$distancia_a_cluster),]
   #####Aqui el primer elemento es el mas cercano al cluster i
   ####verificar que no exista en la tabla de salida, si no ir por el siguiente
   j <- 1
   elemento_salida <- zona_todos[j,]
+  #message(paste0(elemento_salida$Id_Cliente))
   ###Asignar su cluster correcto en columna cluster
   elemento_salida$cluster <- repeticiones[i]
   
-  if(elemento_salida$Id_Cliente %in% tabla_salida$Id_Cliente == FALSE &&
-     elemento_salida$cluster %in% tabla_salida$cluster == FALSE){
+  if(elemento_salida$Id_Cliente %in% tabla_salida$Id_Cliente == FALSE){
 
     ###Agregarlo a la tabla de salida
     tabla_salida <- rbind(tabla_salida, elemento_salida)
@@ -286,8 +310,15 @@ for (i in 1:total){
       ###Remover el elemento de zona todos
       zona_todos <- zona_todos[-j,]
     }
+    test <- zona_todos[is.na(zona_todos),]
+    if(nrow(zona_todos[is.na(zona_todos),]) != 0){
+      message(i)
+    }
     
   } else {
+    #print("repetido")
+    #print(repeticiones[i])
+    #print(elemento_salida$Id_Cliente)
     ###Caso donde ya exista en ese cluster
     j <- j + 1
     elemento_salida <- zona_todos[j,]
@@ -297,19 +328,40 @@ for (i in 1:total){
       j <- j+1
       elemento_salida <- zona_todos[j,]
       k <- elemento_salida$Id_Cliente %in% tabla_salida$Id_Cliente &&
-        elemento_salida$cluster %in% tabla_salida$cluster == FALSE
+        elemento_salida$cluster %in% tabla_salida$cluster
     }
+    #print("El elemento elegido en su lugar es:")
+    #print(elemento_salida$Id_Cliente)
+    #print("Su cluster anterior es:")
+    #print(elemento_salida$cluster)
     
     ##Asignar su cluster correcto en columna cluster
     elemento_salida$cluster <- repeticiones[i]
+    
+    elemento_salida$Frecuencia <- elemento_salida$Frecuencia - 1
+    #elemento_salida[1,1] <- paste0(elemento_salida[1,1],j)
+    #print("Su cluster Nuevo es:")
+    #print(elemento_salida$cluster)
     ###Agregarlo a la tabla de salida
     tabla_salida <- rbind(tabla_salida, elemento_salida)
     #####Quitar -1 a la frecuencia del elemento en zona todos
+    if(is.na(zona_todos[j,3])){
+      j <- 1
+    }
+    #message("Inicio")
+    #print(zona_todos[j,3])
+    #message("------")
     zona_todos[j,3] <- zona_todos[j,3] - 1
+    #message("------")
+    #print(zona_todos[j,3])
     ###Si la frecuencia es 0, se remueve
     if(zona_todos[j,3] == 0){
       ###Remover el elemento de zona todos
       zona_todos <- zona_todos[-j,]
+    }
+    test <- zona_todos[is.na(zona_todos),]
+    if(nrow(zona_todos[is.na(zona_todos),]) != 0){
+      message(i)
     }
     
     
@@ -319,18 +371,28 @@ for (i in 1:total){
     
   }
   
+
+  
   
 }
 #zona_test_final <- rbind(zona1_test,zona2_test,zona3_test,
 #                         zona4_test,zona5_test,zona6_test)
 
 ###Remover el primer row de tabla salida ya que tiene el valor
-### inicializado de 0
+### inicializado de 0 y el ultimo, ya que es un NA
 
 tabla_salida <- tabla_salida[2:nrow(tabla_salida),]
+###Remover NAS
+test <- tabla_salida[!is.na(tabla_salida$cluster),]
+test <- tabla_salida[!is.na(tabla_salida$Vol_Total),]
 
 print("VALORES FINALES")
-test <- calcula_vol_total(zona_test_final, TRUE)
+
+calcula_vol_total(test)
+
+fin <- funcion_output(tabla_salida)
+
+
 
 
 

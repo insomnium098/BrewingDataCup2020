@@ -1,5 +1,5 @@
 for( i in 1:6){
-  df_filt <- filter(zona_final, cluster == i)
+  df_filt <- filter(zona_prueba_final, cluster == i)
   vol_total <- sum(df_filt$Vol_Entrega)
   n_elementos <- nrow(df_filt)
   promedio <- mean(df_filt$Vol_Entrega)
