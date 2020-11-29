@@ -412,6 +412,14 @@ zona_prueba_final_final <- rbind(zona1_prueba,zona2_prueba,zona3_prueba,
 print("VALORES FINALES REBALANCEADOS")
 final_final <- calcula_vol_total(zona_prueba_final_final, TRUE)
 
+df_tabla_final <- final_final
+colnames(df_tabla_final) <- c("Volumen","Paradas")
+df_tabla_final$Dia <- rownames(df_tabla_final)
+df_tabla_final <- df_tabla_final[,c(3,2,1)]
+write.csv(df_tabla_final,"Tabla_output_final.csv")
+
 
 ###Guardamos el output
 funcion_prepara_output()
+
+
