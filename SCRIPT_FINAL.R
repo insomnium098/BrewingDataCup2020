@@ -354,7 +354,7 @@ df_clust_mayor <- df_clust_mayor[with(df_clust_mayor,
                                       order(-distancias_cluster,
                                             -Vol_Total)), ]
 
-####Obtener los 20 mas lejanos y que tengan frecuencia de 1
+####Obtener los  mas lejanos 
 
 df_clust_lejanos <- df_clust_mayor[1:404,]
 df_clust_lejanos <- filter(df_clust_lejanos)#, Frecuencia == 1)
