@@ -2,6 +2,10 @@ library(dplyr)
 library(cluster)
 library(MASS)
 
+####AUTHORS:
+### Bruno Martinez Gutierrez 
+### Antonio Daniel Martinez Gutierrez
+
 
 ###Cargar funciones auxiliares
 source("AUX.R")
