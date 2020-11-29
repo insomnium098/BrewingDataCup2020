@@ -83,7 +83,7 @@ calcula_dias_aux <- function(df_dias_filt, cluster_dias){
   
 }
 
-
+########
 calcula_dias <- function(df_frecuencia, df_cluster_original){
   
   
@@ -111,6 +111,7 @@ calcula_dias <- function(df_frecuencia, df_cluster_original){
   return(calcula_dias_final)
   
 }
+#####
 
 ######
 distancia_test <- function(x1,y1,x2,y2){

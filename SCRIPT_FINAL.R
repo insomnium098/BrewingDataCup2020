@@ -1,8 +1,9 @@
 library(dplyr)
 library(cluster)
-#library(factoextra)
 library(MASS)
 
+
+###Cargar funciones auxiliares
 source("AUX.R")
 
 datos <- read.csv("ubicaciones.csv",
@@ -28,7 +29,7 @@ k2 <- kmeans(df_long_normalized, centers = 6, nstart = 100,
 k2_centers <- as.data.frame(k2$centers)
 
 ###Visualizacion
-#fviz_cluster(k2, data = df_long_normalized) #Visualizamos con 2 clusters
+#fviz_cluster(k2, data = df_long_normalized)
 
 ####asignar clusters a datos
 
@@ -64,7 +65,7 @@ vol_clust2 <- sum(clust2$Vol_Entrega)
 df_vol <- datos_clust$Vol_Total
 df_vol <-  scale(df_vol ,center = TRUE, scale = TRUE)
 
-k2_dist <- kmeans(df_vol, centers = 6, nstart = 25) #Agrupamos k-medias con 25 configuraciones
+k2_dist <- kmeans(df_vol, centers = 6, nstart = 25)
 str(k2_dist)
 
 datos_clust$cluster_vol_total <- k2_dist$cluster
@@ -72,72 +73,11 @@ datos_clust$cluster_vol_total <- k2_dist$cluster
 #fviz_cluster(k2_dist, data = df_long_normalized) #Visualizamos con 2 clusters
 
 
-
-############OBTENER AQUELLOS CON 2 Y 3 FRECUENCIAS DE ENTREGA
-
-df_2 <- filter(datos_clust, Frecuencia == 2)
-df_3 <- filter(datos_clust, Frecuencia == 3)
-df_2_y_3 <- rbind(df_2, df_3)
-
-
-
-
-
-df_frecuencia <- df_2_y_3
 df_cluster_original <- k2_centers
 
 df_cluster_original$cluster <- rownames(df_cluster_original)
 
-####Aqui calculamos los clusters mas cercanos a aquellos
-#### puntos que tienen >1 frecuencia
-clientes_2_y_3_frecuencia <- calcula_dias(df_frecuencia, df_cluster_original)
 
-##########JUNTAMOS LAS ZONAS PREDICHAS CON LAS FIJAS
-zona1_final <-  filter(datos_clust, cluster == 1)
-zona2_final <-  filter(datos_clust, cluster == 2)
-zona3_final <-  filter(datos_clust, cluster == 3)
-zona4_final <-  filter(datos_clust, cluster == 4)
-zona5_final <-  filter(datos_clust, cluster == 5)
-zona6_final <-  filter(datos_clust, cluster == 6)
-
-
-####Pegarles los 2 y 3
-filt1 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 1)
-filt1$cluster <- filt1$cluster_predicted
-
-zona1 <- rbind(zona1_final, filt1[,1:9])
-
-filt2 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 2)
-filt2$cluster <- filt2$cluster_predicted
-
-zona2 <- rbind(zona2_final, filt2[,1:9])
-
-filt3 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 3)
-filt3$cluster <- filt3$cluster_predicted
-
-zona3 <- rbind(zona3_final, filt3[,1:9])
-
-
-filt4 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 4)
-filt4$cluster <- filt4$cluster_predicted
-
-zona4 <- rbind(zona4_final, filt4[,1:9])
-
-filt5 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 5)
-filt5$cluster <- filt5$cluster_predicted
-
-zona5 <- rbind(zona5_final, filt5[,1:9])
-
-filt6 <- filter(clientes_2_y_3_frecuencia, cluster_predicted == 6)
-filt6$cluster <- filt6$cluster_predicted
-
-zona6 <- rbind(zona6_final, filt6[,1:9])
-
-#####
-zona_final <- rbind(zona1,zona2,zona3,zona4,zona5,zona6)
-
-##Remover vol_total
-zona_final <- zona_final[,!names(zona_final) %in% ("Vol_Total")]
 
 ###Fin de script_algo
 
@@ -148,7 +88,7 @@ zona_final <- zona_final[,!names(zona_final) %in% ("Vol_Total")]
 ## CLUSTER 1
 cluster1_x <- df_cluster_original[1,1]
 cluster1_y <- df_cluster_original[1,2]
-##  EL MAMALON ES 590
+##  EL MAS OPTIMO ES 599
 m = 599
 distancias_cluster1 <- c()
 for (i in 1:nrow(datos_clust)) {
@@ -385,7 +325,7 @@ while (1 <= nrow(datos_prueba6)) {
     ban <- TRUE
   }
   
-  if(!ban){print(datos_prueba6[1,]);print(valor);print("AAAAAAAAAA")}
+  if(!ban){print(datos_prueba6[1,]);print(valor);print("DEBUG")}
   #contador = contador + 1
   datos_prueba6[1, 3] <- datos_prueba6[1, 3] - 1 
   
@@ -473,8 +413,5 @@ print("VALORES FINALES REBALANCEADOS")
 final_final <- calcula_vol_total(zona_prueba_final_final, TRUE)
 
 
-
-
-
-
+###Guardamos el output
 funcion_prepara_output()
