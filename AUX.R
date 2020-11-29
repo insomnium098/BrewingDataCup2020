@@ -203,7 +203,7 @@ pesos <- function(x, quitar, bb){
       temp <- distancia_test(x[1,5], x[1,6], df[i,1],df[i, 2])
       if (x[1, 4] == 0){temp1 = 0}
       else{
-        temp1 <- test[i, 1]# / x[1,4]
+        temp1 <- test[i, 1] / x[1,4]
       }
       temp2 <- log(test[i,2]/3977)
       #message(paste0(temp,", ", temp1, ", ", temp2))
