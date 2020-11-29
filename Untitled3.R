@@ -5,7 +5,7 @@ datos_cero <- datos_clust[datos_clust$Vol_Entrega == 0,]
 cluster1_x <- df_cluster_original[1,1]
 cluster1_y <- df_cluster_original[1,2]
 ##  EL MAMALON ES 590
-m = 590
+m = 600
 distancias_cluster1 <- c()
 for (i in 1:nrow(datos_clust)) {
   distancias_cluster1 <- c(distancias_cluster1, distancia_test(datos_clust[i, 5], datos_clust[i, 6],
@@ -317,7 +317,11 @@ final <- calcula_vol_total(zona_prueba_final, TRUE)
 prom_recom <- sum(final$vol_total) / 6
 ###Obtener cluster que tiene el mayor volumen
 
-clust_mayor_vol <- rownames(final[final$vol_total == max(final$vol_total),])
+clust_mayor_vol_df <- final[order(final$vol_total, decreasing = TRUE),]
+
+#clust_mayor_vol <- rownames(final[final$vol_total == max(final$vol_total),])
+clust_mayor_vol <- rownames(clust_mayor_vol_df[1,])
+clust_mayor_dos <- rownames(clust_mayor_vol_df[2,])
 
 ######Obtener los puntos mas lejanos del cluster mayor
 df_clust_mayor <- filter(zona_prueba_final, 
@@ -335,12 +339,15 @@ df_clust_mayor <- df_clust_mayor[with(df_clust_mayor,
 ####Obtener los 20 mas lejanos y que tengan frecuencia de 1
 #####EL MEJOR VALOR SE OBTIENE 250
 ###Max value con 293, es el limite superior
-df_clust_lejanos <- df_clust_mayor[1:400,]
-df_clust_lejanos <- filter(df_clust_lejanos, Frecuencia == 1)
+
+####Max xon Vol_total como filtro con 405
+df_clust_lejanos <- df_clust_mayor[1:405,]
+df_clust_lejanos <- filter(df_clust_lejanos)#, Frecuencia == 1)
 
 ####Calcular el cluster mas cercano, con excepcion del original
 
 df_cluster_lejano <- filter(df_cluster_original, cluster != clust_mayor_vol)
+#df_cluster_lejano <- filter(df_cluster_lejano, cluster != clust_mayor_dos)
 
 for( i in 1:nrow(df_clust_lejanos)){
   a <- calcula_distancia(df_clust_lejanos[i,5], df_clust_lejanos[i,6],
