@@ -33,6 +33,7 @@ k2 <- kmeans(df_long_normalized, centers = 6, nstart = 100,
 k2_centers <- as.data.frame(k2$centers)
 
 ###Visualizacion
+#library(factoextra)
 #fviz_cluster(k2, data = df_long_normalized)
 
 ####asignar clusters a datos

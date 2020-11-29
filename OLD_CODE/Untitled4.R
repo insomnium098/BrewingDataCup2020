@@ -16,6 +16,15 @@ ggplot(zona1_prueba, aes(x=lat, y=lon, color=cluster)) +
 ggplot(zona2_prueba, aes(x=lat, y=lon)) + 
   geom_point()
 
-ggplot(prueba_zona, aes(x=lat, y=lon, color=cluster)) + 
-  geom_point()
+cbp1 <- c("chartreuse1", "tomato2", "darkorchid", "sienna1",
+          "dodgerblue1", "darkslategrey")
+
+ggplot(zona_prueba_final, aes(x=lon, y=lat, color=as.factor(cluster)),
+       fill=as.factor(cluster)) + 
+  geom_point() + theme(legend.title = element_blank()) + scale_colour_manual(values=cbp1)
+
+
+ggplot(zona_prueba_final_final, aes(x=lon, y=lat, color=as.factor(cluster)),
+       fill=as.factor(cluster)) + 
+  geom_point() + theme(legend.title = element_blank()) + scale_colour_manual(values=cbp1)
 
