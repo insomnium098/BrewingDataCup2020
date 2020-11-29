@@ -93,7 +93,7 @@ df_cluster_original$cluster <- rownames(df_cluster_original)
 cluster1_x <- df_cluster_original[1,1]
 cluster1_y <- df_cluster_original[1,2]
 ##  EL MAS OPTIMO ES 599
-m = 599
+m = 590
 distancias_cluster1 <- c()
 for (i in 1:nrow(datos_clust)) {
   distancias_cluster1 <- c(distancias_cluster1, distancia_test(datos_clust[i, 5], datos_clust[i, 6],
