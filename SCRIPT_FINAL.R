@@ -92,7 +92,7 @@ df_cluster_original$cluster <- rownames(df_cluster_original)
 ## CLUSTER 1
 cluster1_x <- df_cluster_original[1,1]
 cluster1_y <- df_cluster_original[1,2]
-##  EL MAS OPTIMO ES 599
+##  EL MAS OPTIMO ES 590
 m = 590
 distancias_cluster1 <- c()
 for (i in 1:nrow(datos_clust)) {
@@ -359,7 +359,7 @@ df_clust_mayor <- df_clust_mayor[with(df_clust_mayor,
                                             -Vol_Total)), ]
 
 ####Obtener los  mas lejanos 
-
+#404
 df_clust_lejanos <- df_clust_mayor[1:404,]
 df_clust_lejanos <- filter(df_clust_lejanos)#, Frecuencia == 1)
 
@@ -420,6 +420,19 @@ df_tabla_final <- final_final
 colnames(df_tabla_final) <- c("Volumen","Paradas")
 df_tabla_final$Dia <- rownames(df_tabla_final)
 df_tabla_final <- df_tabla_final[,c(3,2,1)]
+
+###Agregar la distancia minima como la suma
+###de distancias al centro
+df_tabla_final$dist_minima <- 0
+
+df_tabla_final[1,4] <- sum(zona1_prueba$distancias_cluster)
+df_tabla_final[2,4] <- sum(zona2_prueba$distancias_cluster)
+df_tabla_final[3,4] <- sum(zona3_prueba$distancias_cluster)
+df_tabla_final[4,4] <- sum(zona4_prueba$distancias_cluster)
+df_tabla_final[5,4] <- sum(zona5_prueba$distancias_cluster)
+df_tabla_final[6,4] <- sum(zona6_prueba$distancias_cluster)
+
+
 write.csv(df_tabla_final,"Tabla_output_final.csv")
 
 

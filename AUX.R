@@ -159,6 +159,7 @@ calcula_vol_total <- function(zona_prueba_final, bandera){
     n_elementos <- nrow(df_filt)
     promedio <- mean(df_filt$Vol_Entrega)
     
+    
     ms <- paste0("Vol_total= ", vol_total,
                  " n_elementos= ", n_elementos,
                  " Promedio= ", promedio)
@@ -180,6 +181,7 @@ calcula_vol_total <- function(zona_prueba_final, bandera){
       n_final <- c(n_final, n_elementos)
     }
   }
+  
   df_vol_total$n <- n_final
   return(df_vol_total)
   
