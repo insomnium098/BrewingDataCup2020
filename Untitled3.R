@@ -322,13 +322,20 @@ clust_mayor_vol <- rownames(final[final$vol_total == max(final$vol_total),])
 ######Obtener los puntos mas lejanos del cluster mayor
 df_clust_mayor <- filter(zona_prueba_final, 
                          cluster == as.integer(clust_mayor_vol))
+
+###Esta es la funcion chida
+#df_clust_mayor <- df_clust_mayor[with(df_clust_mayor, 
+#                                      order(-distancias_cluster)), ]
+#####
 df_clust_mayor <- df_clust_mayor[with(df_clust_mayor, 
-                                      order(-distancias_cluster)), ]
+                                      order(-distancias_cluster,
+                                            -Vol_Total)), ]
+
 
 ####Obtener los 20 mas lejanos y que tengan frecuencia de 1
 #####EL MEJOR VALOR SE OBTIENE 250
-
-df_clust_lejanos <- df_clust_mayor[1:280,]
+###Max value con 293, es el limite superior
+df_clust_lejanos <- df_clust_mayor[1:400,]
 df_clust_lejanos <- filter(df_clust_lejanos, Frecuencia == 1)
 
 ####Calcular el cluster mas cercano, con excepcion del original
