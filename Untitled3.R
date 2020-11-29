@@ -5,7 +5,7 @@ datos_cero <- datos_clust[datos_clust$Vol_Entrega == 0,]
 cluster1_x <- df_cluster_original[1,1]
 cluster1_y <- df_cluster_original[1,2]
 ##  EL MAMALON ES 600, antes 590
-m = 600
+m = 599
 distancias_cluster1 <- c()
 for (i in 1:nrow(datos_clust)) {
   distancias_cluster1 <- c(distancias_cluster1, distancia_test(datos_clust[i, 5], datos_clust[i, 6],

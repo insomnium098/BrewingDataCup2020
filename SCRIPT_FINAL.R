@@ -8,13 +8,9 @@ source("AUX.R")
 datos <- read.csv("ubicaciones.csv",
                   header = TRUE)
 
-##TO-DO: REMOVER LUGARES CON VOLUMEN DE ENTREGA 0
-
-nrow(datos[datos$Vol_Entrega == 0,])
 
 
-
-plot(datos$lat, datos$lon)
+#plot(datos$lat, datos$lon)
 
 
 ####Clustering
@@ -24,13 +20,14 @@ df_long <- datos[,5:6]
 ###Normalizar las coordenadas
 df_long_normalized <-  scale(df_long ,center = TRUE, scale = TRUE)
 
-#distance <- get_dist(df_long_normalized)
-
-k2 <- kmeans(df_long_normalized, centers = 6, nstart = 25) #Agrupamos k-medias con 25 configuraciones
-str(k2)
+###Clustering
+k2 <- kmeans(df_long_normalized, centers = 6, nstart = 100,
+             algorithm = "MacQueen")
+#str(k2)
 
 k2_centers <- as.data.frame(k2$centers)
 
+###Visualizacion
 #fviz_cluster(k2, data = df_long_normalized) #Visualizamos con 2 clusters
 
 ####asignar clusters a datos
@@ -292,7 +289,7 @@ funcion_prepara_output <- function(){
 cluster1_x <- df_cluster_original[1,1]
 cluster1_y <- df_cluster_original[1,2]
 ##  EL MAMALON ES 590
-m = 600
+m = 599
 distancias_cluster1 <- c()
 for (i in 1:nrow(datos_clust)) {
   distancias_cluster1 <- c(distancias_cluster1, distancia_test(datos_clust[i, 5], datos_clust[i, 6],

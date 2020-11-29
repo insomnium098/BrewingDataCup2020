@@ -26,12 +26,13 @@ df_long_normalized <-  scale(df_long ,center = TRUE, scale = TRUE)
 
 #distance <- get_dist(df_long_normalized)
 
-k2 <- kmeans(df_long_normalized, centers = 6, nstart = 25) #Agrupamos k-medias con 25 configuraciones
+k2 <- kmeans(df_long_normalized, centers = 6, nstart = 25,
+             algorithm = "MacQueen") #Agrupamos k-medias con 25 configuraciones
 str(k2)
 
 k2_centers <- as.data.frame(k2$centers)
 
-fviz_cluster(k2, data = df_long_normalized) #Visualizamos con 2 clusters
+#fviz_cluster(k2, data = df_long_normalized) #Visualizamos con 2 clusters
 
 ####asignar clusters a datos
 
