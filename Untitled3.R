@@ -4,6 +4,7 @@ datos_cero <- datos_clust[datos_clust$Vol_Entrega == 0,]
 
 cluster1_x <- df_cluster_original[1,1]
 cluster1_y <- df_cluster_original[1,2]
+##  EL MAMALON ES 590
 m = 590
 distancias_cluster1 <- c()
 for (i in 1:nrow(datos_clust)) {
@@ -199,14 +200,20 @@ calcula_vol_total <- function(zona_prueba_final, bandera){
       message(ms)
       print(quantile(df_filt$Vol_Entrega))
     }
-    t <- as.data.frame(promedio)
+    t <- as.data.frame(vol_total)
     if(!exists("df_vol_total")){
       df_vol_total <- t
     } else {
       df_vol_total <- rbind(df_vol_total, t)
     }
+    
+    if(!exists("n_final")){
+      n_final <- n_elementos
+    } else {
+      n_final <- c(n_final, n_elementos)
+    }
   }
-  df_vol_total$n <- n_elementos
+  df_vol_total$n <- n_final
   return(df_vol_total)
   
 }
@@ -228,7 +235,7 @@ pesos <- function(x, quitar, bb){
       }
       temp2 <- log(test[i,2]/3977)
       #message(paste0(temp,", ", temp1, ", ", temp2))
-      temp_final = (.3/2) * abs(temp) +  .25* abs(temp1)# + (.3/2)*abs(temp2)
+      temp_final = (.3/2) * (temp) +  .25* (temp1) + (.3/2)*(temp2)
       if(bb){print("TEMP FINAL"); print(temp)}
       if (peso > temp_final){
         peso = temp_final
@@ -302,7 +309,84 @@ zona_prueba_final <- rbind(zona1_prueba,zona2_prueba,zona3_prueba,
                            zona4_prueba,zona5_prueba,zona6_prueba)
 
 print("VALORES FINALES")
-test <- calcula_vol_total(zona_prueba_final, TRUE)
+final <- calcula_vol_total(zona_prueba_final, TRUE)
+#funcion_prepara_output()
+
+
+####Obtener el promedio recomendado para las 6 zonas
+prom_recom <- sum(final$vol_total) / 6
+###Obtener cluster que tiene el mayor volumen
+
+clust_mayor_vol <- rownames(final[final$vol_total == max(final$vol_total),])
+
+######Obtener los puntos mas lejanos del cluster mayor
+df_clust_mayor <- filter(zona_prueba_final, 
+                         cluster == as.integer(clust_mayor_vol))
+df_clust_mayor <- df_clust_mayor[with(df_clust_mayor, 
+                                      order(-distancias_cluster)), ]
+
+####Obtener los 20 mas lejanos y que tengan frecuencia de 1
+
+df_clust_lejanos <- df_clust_mayor[1:200,]
+df_clust_lejanos <- filter(df_clust_lejanos, Frecuencia == 1)
+
+####Calcular el cluster mas cercano, con excepcion del original
+
+df_cluster_lejano <- filter(df_cluster_original, cluster != clust_mayor_vol)
+
+for( i in 1:nrow(df_clust_lejanos)){
+  a <- calcula_distancia(df_clust_lejanos[i,5], df_clust_lejanos[i,6],
+                         df_cluster_lejano$lat, 
+                         df_cluster_lejano$lon,
+                         df_cluster_lejano$cluster)
+  df_c <- df_clust_lejanos[i,]
+  a <- a[3]
+  df_c$cluster <- a
+  #####Añadir al cluster_correspondiente
+  if(a == "1"){
+    zona1_prueba <- rbind(zona1_prueba, df_c)
+    
+  } else if (a == "2"){
+    zona2_prueba <- rbind(zona2_prueba, df_c)
+  } else if (a == "3"){
+    zona3_prueba <- rbind(zona3_prueba, df_c)
+  } else if (a == "4"){
+    zona4_prueba <- rbind(zona4_prueba, df_c)
+  } else if (a == "5"){
+    zona5_prueba <- rbind(zona5_prueba, df_c)
+  }else if (a == "6"){
+    zona6_prueba <- rbind(zona6_prueba, df_c)
+  }
+  
+  ### eliminar el elemento de su cluster original
+  if(clust_mayor_vol == "1"){
+    zona1_prueba <- zona1_prueba[-which(zona1_prueba$Id_Cliente == df_c$Id_Cliente),]
+    
+  } else if (clust_mayor_vol == "2"){
+    zona2_prueba <- zona2_prueba[-which(zona2_prueba$Id_Cliente == df_c$Id_Cliente),]
+  } else if (clust_mayor_vol == "3"){
+    zona3_prueba <- zona3_prueba[-which(zona3_prueba$Id_Cliente == df_c$Id_Cliente),]
+  } else if (clust_mayor_vol == "4"){
+    zona4_prueba <- zona4_prueba[-which(zona4_prueba$Id_Cliente == df_c$Id_Cliente),]
+  } else if (clust_mayor_vol == "5"){
+    zona5_prueba <- zona5_prueba[-which(zona5_prueba$Id_Cliente == df_c$Id_Cliente),]
+  }else if (clust_mayor_vol == "6"){
+    zona6_prueba <- zona6_prueba[-which(zona6_prueba$Id_Cliente == df_c$Id_Cliente),]
+  }
+  
+}
+
+
+zona_prueba_final_final <- rbind(zona1_prueba,zona2_prueba,zona3_prueba,
+                           zona4_prueba,zona5_prueba,zona6_prueba)
+
+print("VALORES FINALES REBALANCEADOS")
+final_final <- calcula_vol_total(zona_prueba_final_final, TRUE)
+
+
+
+
+
 
 funcion_prepara_output()
 

@@ -99,16 +99,16 @@ calcula_distancia <- function(x1,y1,x2,y2,string_nombres){
   for (i in 1:veces_loop){
     xi2 <- x2[i]
     yi2 <- y2[i]
-    distancia <- sqrt(((xi2 - x1)^2) + ((yi2 - y1)^2))
+    distancia_x <- sqrt(((xi2 - x1)^2) + ((yi2 - y1)^2))
     
     if(!exists("mas_cercano")){
       mas_cercano <- c(xi2, yi2)
-      mas_cercano_dist <- distancia[1]
+      mas_cercano_dist <- distancia_x[1]
       p_cercano <- string_nombres[i]
     } else {
-      if(distancia < mas_cercano_dist){
+      if(distancia_x < mas_cercano_dist){
         mas_cercano <- c(xi2, yi2)
-        mas_cercano_dist <- distancia[1]
+        mas_cercano_dist <- distancia_x[1]
         p_cercano <- string_nombres[i]
       }
     }
