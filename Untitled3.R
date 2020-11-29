@@ -327,7 +327,7 @@ df_clust_mayor <- df_clust_mayor[with(df_clust_mayor,
 
 ####Obtener los 20 mas lejanos y que tengan frecuencia de 1
 
-df_clust_lejanos <- df_clust_mayor[1:200,]
+df_clust_lejanos <- df_clust_mayor[1:250,]
 df_clust_lejanos <- filter(df_clust_lejanos, Frecuencia == 1)
 
 ####Calcular el cluster mas cercano, con excepcion del original
